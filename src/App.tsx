@@ -19,9 +19,10 @@ import { TodoList } from './components/TodoList';
 import { FinanceDashboard } from './components/FinanceDashboard';
 import { MarIaChat } from './components/MarIaChat';
 import { GlobalSearch } from './components/GlobalSearch';
+import { LandingPage } from './components/LandingPage';
 
 export default function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [view, setView] = useState<'landing' | 'login' | 'dashboard'>('landing');
   const [user, setUser] = useState('');
   const [isLoaded, setIsLoaded] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -31,7 +32,7 @@ export default function App() {
     const savedUser = localStorage.getItem('miwebpro_user');
     if (savedUser) {
       setUser(savedUser);
-      setIsLoggedIn(true);
+      setView('dashboard');
     }
     
     // Simulate initial loading for "takeoff" effect
@@ -40,17 +41,21 @@ export default function App() {
 
   const handleLogin = (username: string) => {
     setUser(username);
-    setIsLoggedIn(true);
+    setView('dashboard');
     localStorage.setItem('miwebpro_user', username);
   };
 
   const handleLogout = () => {
-    setIsLoggedIn(false);
+    setView('landing');
     setUser('');
     localStorage.removeItem('miwebpro_user');
   };
 
-  if (!isLoggedIn) {
+  if (view === 'landing') {
+    return <LandingPage onGetStarted={() => setView('login')} />;
+  }
+
+  if (view === 'login') {
     return <Login onLogin={handleLogin} />;
   }
 
